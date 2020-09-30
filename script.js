@@ -1,71 +1,76 @@
-var countInterval;
+"use strict";
 
+var first_element = document.getElementById('first');
+var second_element = document.getElementById('second');
 
-function startCounter() {
-    
-    var number = parseInt(document.getElementById("number").value);
-    
-    if(isNaN(number)) {
-        alert("Please enter a number");
-        clearInterval(countInterval);   // This is important for the condition when a counter is running and you entered a wrong input for a new counter
+var button = document.getElementsByTagName("button")[0];
+var total_time;
+
+var switcher = false;
+
+button.addEventListener('click', function (event)
+{
+    event.preventDefault();
+    var input = document.getElementsByTagName('input')[0];
+    total_time = input.value;
+    if (total_time == "") {
+        window.alert("Please enter a number");
         return;
     }
-    if(number < 1 || number > 99999) {
-        alert("Range out of bounds");
-        clearInterval(countInterval);
+    if (total_time <= 0 || total_time > 9) {
+        window.alert("Please enter a number in the given range");
         return;
     }
-    
-    var currentNos = document.querySelectorAll(".counter .current");
-    var nextNos = document.querySelectorAll(".counter .next");
-    var count = 0;
-    
-    // If user clicks on 'Start Counter' button again - remove this function and below line if you don't consider this situation
-    resetNumbers(currentNos, nextNos, 5);
-    
-    // Clears the previous interval that was running
-    clearInterval(countInterval);
-    
-    countInterval = setInterval(function() {
-        if(count === number) {
-            clearInterval(countInterval);
-            alert("Counter has stopped");
+    input.value = "";
+    start_counting();
+})
+function bring_first_to_front()
+{
+    first_element.innerText = total_time;
+
+    first_element.style.zIndex = 1;
+    second_element.style.zIndex = 0;
+
+    first_element.style.transition = "top ease-in-out 0.3s";
+    second_element.style.transitionDelay = "0.3s";
+
+    first_element.style.top = "0px";
+    second_element.style.top = "50px";
+
+    switcher = false;
+}
+function bring_second_to_front()
+{
+    second_element.innerText = total_time;
+
+    second_element.style.zIndex = 1;
+    first_element.style.zIndex = 0;
+
+    second_element.style.transition = "top ease-in-out 0.3s";
+    first_element.style.transitionDelay = "0.3s";
+
+    second_element.style.top = "0px";
+    first_element.style.top = "50px";
+
+    switcher = true;
+}
+function start_counting()
+{
+
+    let id = setInterval(function ()
+    {
+        if (total_time-- == 0) {
+            clearInterval(id);
             return;
         }
-        increaseCount(currentNos, nextNos, 4);
-        count++;
-    }, 1000);
+        if (switcher) {
+            bring_first_to_front();
 
-}
-
-
-function resetNumbers(currentNos, nextNos, end) {
-    for(var i=0; i<end; ++i) {
-        currentNos[i].innerText = 0;
-        nextNos[i].innerText = 1;
-    }
-}
-
-
-
-function increaseCount(currentNos, nextNos, index) {
-    
-    let current = currentNos[index];
-    let next = nextNos[index];
-    
-    if(current.innerText == 9) {
-        increaseCount(currentNos, nextNos, index-1);
-    }
-    
-    next.classList.add("animate");
-    
-    setTimeout(function() {
-        current.innerText = next.innerText;
-        next.classList.remove("animate");
-        next.innerText = parseInt(next.innerText) + 1;
-        if(next.innerText > 9) {
-            next.innerText = 0;
         }
-    }, 500);
-    
+        else {
+            bring_second_to_front();
+
+        }
+    }, 1000)
 }
+
