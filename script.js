@@ -73,4 +73,3 @@ function start_counting()
         }
     }, 1000)
 }
-
